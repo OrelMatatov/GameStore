@@ -24,6 +24,11 @@ const Game = new Schema({
     rating: {
         type: Number,
         default: 0
+    },
+
+    releaseYear: {
+        type: Number,
+        default: 2023
     }
 });
 

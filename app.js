@@ -1,7 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser');
 const cors = require('cors')
-const games =require('./routes/game')
+const games = require('./routes/game')
 require('./config/db')
 
 const app = express();
@@ -11,5 +11,5 @@ app.use(express.json());
 
 
 app.use('/games', games);
-app.listen(8080);
+app.listen(8081);
 console.log("Server is running...")

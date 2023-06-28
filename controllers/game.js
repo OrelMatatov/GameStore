@@ -1,7 +1,7 @@
 const gameService = require('../services/game');
 
 const createGame = async (req,res) => {
-    const newGame = await gameService.createGame(req.body.title, req.body.platform, req.body.price, req.body.about, req.body.rating);
+    const newGame = await gameService.createGame(req.body.title, req.body.platform, req.body.price, req.body.about, req.body.rating, req.body.releaseYear);
     res.json(newGame)
 }
 
@@ -46,19 +46,25 @@ const deleteGame = async (req,res) => {
     res.send();
 }
 
-const searchGameByTitle = async (req, res) => {
-    const game = await gameService.searchGameByTitle(req.body.title);
+const searchGamesByTitle = async (req, res) => {
+    const game = await gameService.searchGamesByTitle(req.query.title);
     res.json(game);
 }
 
-const filterResults = async (req, res) => {
+const filterGames = async (req, res) => {
     /*req.query = {
-        q: 'books',
-        category: 'fiction'
+        price: 'lessThan20',
+        platform: 'ps4',
+        rating: '4'
       }*/
 
-    
-    
+    const games = await gameService.filterGames(req.query.price, req.query.platform, req.query.rating);
+    res.json(games);
+}
+
+const groupByReleaseYear = async (req, res) => {
+    const games = await gameService.groupByReleaseYear()
+    res.json(games)
 }
 
 module.exports = {
@@ -67,5 +73,7 @@ module.exports = {
     getGames,
     updateGame,
     deleteGame,
-    searchGameByTitle
+    searchGamesByTitle,
+    filterGames,
+    groupByReleaseYear
 }
