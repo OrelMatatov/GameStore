@@ -1,13 +1,15 @@
 const Game = require('../models/game')
 
-const createGame = async(title, platform, price, about, rating, releaseYear) =>{
-    const game = new Game(
+const createGame = async(title, platform, price, about, rating, releaseYear, supplier) =>{
+    var game = new Game(
         {
             title:title,
             platform:platform,
             price:price,
+            about:about,
             rating:rating,
-            releaseYear: releaseYear
+            releaseYear: releaseYear,
+            supplier: supplier
         });
 
         if(about)
@@ -28,12 +30,13 @@ const getGames = async() =>{
     return await Game.find({})
 }
 
-const updateGame = async (id, title, platform, price, about, rating, releaseYear ) => {
+const updateGame = async (id, title, platform, price, about, rating, releaseYear, supplier) => {
     const game = await getGameById(id);
     if(!game)
         return null;
     game.title = title; game.platform = platform; game.price = price; 
     game.about = about; game.rating = rating; game.releaseYear = releaseYear;
+    game.supplier = supplier;
     await game.save();
     return game;
 }
@@ -47,7 +50,9 @@ const deleteGame = async (id) => {
 }
 
 const searchGamesByTitle = async (title) => {
-    return await Game.find({title: title});
+    //return await Game.find({title: title});
+    //help us with case sensative
+    return await Game.find({ title: { $regex: title, $options: 'i' } });
 }
 
 const filterGames = async (price, platform, rating) => {
@@ -102,6 +107,17 @@ const groupByReleaseYear = async () => {
       ]);
 }
 
+const groupByRating = async ()=> {
+    return await Game.aggregate([
+        {
+          $group: {
+            _id: { rating: "$rating" },
+            games: { $push: "$$ROOT" }
+          }
+        }
+      ]);
+}
+
 
 module.exports = {
     createGame,
@@ -111,5 +127,6 @@ module.exports = {
     deleteGame,
     searchGamesByTitle,
     filterGames,
-    groupByReleaseYear
+    groupByReleaseYear,
+    groupByRating
 }
