@@ -12,11 +12,17 @@ router.route('/game/:id')
     .put(gameController.updateGame)
     .delete(gameController.deleteGame)
 
-router.get('/search', gameController.searchGamesByTitle)
+router.route('/search')
+    .get(gameController.searchGamesByTitle);
 
-router.get('/filterGames', gameController.filterGames)
+router.route('/filterGames')
+    .get(gameController.filterGames);
 
-router.get('/groupByReleaseYear', gameController.groupByReleaseYear)
+router.route('/groupByReleaseYear')
+    .get(gameController.groupByReleaseYear)
+
+router.route('/groupByRating')
+    .get(gameController.groupByRating)
 
 
 module.exports = router;
