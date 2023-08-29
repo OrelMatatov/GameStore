@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        .form-inline{
+            margin-left: 250px;
+        }
+
+        .form-control{
+            width: 40%;
+        }
+
+        .sidebar{
+          height: 100%;
+        }
+
+        .container-fluid{
+            margin-top: 10px;
+            padding: 20px;
+        }
+
+        .platform-logo img{
+            width: 75px;
+            height: 35px;
+            margin-top: 10px;
+
+        }
+
+        .container{
+            width: 250px;
+        }
+
+        .title{
+            margin-top: 15px;
+            font-size: 20px;
+        }
+
+        .cover img{
+            width: 185px;
+            height: 200px;
+        }
+        .stars img{
+          width: 15px;
+          height: 15px;
+          margin-bottom: 7px;
+        }
+
+        .add-to-cart-btn{
+          font-size: 15px;
+        }
+
+        .edit-btn{
+          font-size: 15px;
+        }
+
+        .about img{
+          width: 25px;
+          height: 25px;
+          padding-left: 5px;
+          padding-bottom: 5px;
+        }
+
+        .group-by{
+          margin-left: 5px;
+          margin-right: 5px;
+        }
+
+      
+        
+        .group-btn{
+          padding: 5px;
+        }
+
+        .nav-icon{
+          width: 20px;
+          height: 20px;
+        }
+
+        .year-select{
+          width: 150px;
+        }
+
+        .cart-icon {
+            position: relative;
+            display: inline-block;
+            
+        }
+
+        .cart-icon-img {
+            display: block;
+            max-width: 100%;
+            width: 20px; 
+            height: 20px;
+            position: absolute;
+            top:20px;
+            right: 30px;
+
+        }
+
+        .item-count {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            transform: translate(50%, -50%); 
+            font-size: 12px; 
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%; 
+            padding: 3px 6px;
+
+   
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+      .game{
+        margin-top: 30px;
+      }
+
+      .about-games-button{
+        margin-left: 15px;
+        width: 250x;
+      }
+
+      .footer {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        .footer-line {
+            border-top: 1px solid #555;
+            margin-top: 20px;
+            padding-top: 10px;
+        }
+
+        #currencySelector {
+            padding: 5px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #333;
+        }
+        #currencySelector:hover {
+            border-color: #999;
+        }
+        #currencySelector:focus {
+            outline: none;
+            border-color: #66afe9;
+            box-shadow: 0 0 5px rgba(102, 175, 233, 0.5);
+        }
+
+        .games-container {
+            margin-top: -15px; /* Adjust the margin value as needed */
+        }
+
+        .icon-container{
+          position: absolute;
+          right: -90px;
+        }
+
+        #canvas-container{
+          position: relative;
+          top:-5px;
+        }
+
+        .navbar{
+          padding: 5px 15px;
+          border-top-width: thin;
+        }
+
+
+</style>
+</head>
+<body>
+
+    <!----------------------------MAIN NAVIGATION BAR------------------------------>
+      <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <a class="navbar-brand" href="./homePage.html"><div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+              <!-- Your existing navigation items -->
+          </ul>
+          <!-- Insert the 3D Game Controller Icon here -->
+          <div id="canvas-container"></div>
+      </div></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+      <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 10); // Adjust aspect ratio
+        const renderer = new THREE.WebGLRenderer({ alpha: true }); // Use alpha to make the background transparent
+        renderer.setSize(90, 90); // Adjust canvas size
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        const radius = 1; // Adjust radius for circular shape
+        const segments = 32; // Number of segments for the circle
+        let hue = 0; // Starting hue value
+        const geometry = new THREE.CircleGeometry(radius, segments);
+        const material = new THREE.MeshBasicMaterial({ color: new THREE.Color(`hsl(${hue}, 100%, 50%)`) }); // Use hue
+        const controller = new THREE.Mesh(geometry, material);
+        scene.add(controller);
+
+        // Load the Helvetiker font
+        const fontLoader = new THREE.FontLoader();
+        fontLoader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', (font) => {
+            const textGeometry = new THREE.TextGeometry('Game Store', {
+                font: font,
+                size: 0.25, // Adjust text size
+                height: -0.1, // Adjust text height
+            });
+            const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff }); // Use black color
+            const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+            textMesh.position.set(-1, 0.5, 0.5); // Centered position
+            controller.add(textMesh);
+
+            animate();
+        });
+
+        camera.position.z = 2.5;
+
+        const animate = function () {
+        requestAnimationFrame(animate);
+
+            controller.rotation.x += 0.005; // Adjust rotation speed
+            controller.rotation.y += 0.005; // Adjust rotation speed
+
+            // Update the circle's color
+            hue += 1; // Increment hue value
+            if (hue > 360) {
+                hue = 0; // Reset hue after one full cycle
+            }
+            controller.material.color.setHSL(hue / 360, 1, 0.5);
+
+            renderer.render(scene, camera);
+        };
+
+        animate();
+    </script>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="./homePage.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./userProfile.html">Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./singleUserPurchaseDisplay.html">Purchases</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./suppliersDisplay.html">Suppliers</a>
+          </li>
+          <li class="nav-item dropdown" id="adminDropdown" style="display: none;">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Admin
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="./gameCreationForm.html">Add Game</a></li>
+              <li><a class="dropdown-item" href="./createSupplierForm.html">Add Supplier</a></li>
+              <li><a class="dropdown-item" href="./usersDisplay.html">Users List</a></li>
+              <li><a class="dropdown-item" href="./usersPurchasesDisplay.html">Purchases List</a></li>
+              <li><a class="dropdown-item" href="./statisticGraphs.html">Statistical Graphs</a></li>
+            </ul>
+          </li>
+          
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <div class="input-group">
+            <input class="form-control mr-sm-2 searchText" type="text" placeholder="Search Game By Title" aria-label="Search" id="searchInput">
+            <div class="input-group-append">
+              <button class="btn btn-outline-success my-2 my-sm-0 searchButton" type="button" onclick="getGameByTitle()">Search</button>
+            </div>
+          </div>
+        </form> 
+
+        <div class="ml-auto d-flex align-items-center about-games-button">
+          <a href="./aboutTheGames.html" class="btn btn-outline-light ">Our Popular Games</a>
+        </div>
+        <div clsss="cart-icon">
+          <a href="./cart.html">
+          <img src="../imgs/cart.png" alt="" class="cart-icon-img">
+          <span class="item-count badge badge-danger">0</span>
+        </a>
+        </li>         
+      </div>
+
+      
+    </nav>
+       <!----------------------------MAIN NAVIGATION BAR------------------------------>
+
+
+      <!--------------------------------FILTER SIDE BAR--------------------------------->
+      <div class="container-fluid">
+        <div class="row">
+          <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <div class="position-sticky">
+
+              <h4>Price</h4>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="priceLess20">
+                <label class="form-check-label" for="priceLess20">
+                  Less than 20$
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="price20to50">
+                <label class="form-check-label" for="price20to50">
+                  20$ to 50$
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="priceMore50">
+                <label class="form-check-label" for="priceMore50">
+                  More than 50$
+                </label>
+              </div>
+
+
+              <h4 class="mt-3">Rating</h4>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="rating2">
+                <label class="form-check-label" for="rating2">
+                  2
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="rating3">
+                <label class="form-check-label" for="rating3">
+                  3
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="rating4">
+                <label class="form-check-label" for="rating4">
+                  4
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="rating5">
+                <label class="form-check-label" for="rating5">
+                  5
+                </label>
+              </div>
+
+
+              <h4 class="mt-3">Platform</h4>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="XBOX_ONE">
+                <label class="form-check-label" for="xbox_one">
+                  Xbox One
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="XBOX360">
+                <label class="form-check-label" for="xbox_360">
+                  Xbox 360
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="PS4">
+                <label class="form-check-label" for="PS4">
+                  PS4
+                </label>
+              </div>
+
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="PS5">
+                <label class="form-check-label" for="PS5">
+                  PS5
+                </label>
+              </div>
+
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="PC">
+                <label class="form-check-label" for="PC">
+                  PC
+                </label>
+              </div>
+            <br>
+              <button type="button" class="btn btn-primary" onclick="filterGames()" id="filterBtn" disabled>Filter</button>
+            </div>
+          </nav>
+
+      <!--------------------------------FILTER SIDE BAR--------------------------------->
+
+     
+          <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 games-container">
+            <div class="row group-by-section">
+              <div class="col-md-6">
+                Group By:
+                <select class="group-by">
+                  <option value="releaseYear">Release Year</option>
+                  <option value="rating">Rating</option>
+                </select>
+
+                <button type="button" class="btn btn-primary group-btn" onclick="groupBy()">Group</button>
+              
+              </div>
+
+
+              <div class="col-md-4">
+                <div class="greet-user"></div>
+                <div class="currency-converter">
+                  <label for="currencySelector">Select Currency:</label>
+                  <select id="currencySelector">
+                      <option value="USD">USD</option>
+                      <option value="EUR">EUR</option>
+                      <option value="GBP">GBP</option>
+                      <option value="ILS">ILS</option>
+                  </select>
+              </div>
+              
+            </div>
+
+            <div class="col-md-2 icon-container" title="Chat With A Bot!">
+              <i class="fa-solid fa-robot fa-3x"></i>         
+            </div>
+          
+          </main>
+          
+        </div>
+
+      </div>
+
+      <div class="footer">
+        <p>&copy; 2023 Game Store. All rights reserved.</p>
+        <p>Contact us: info@gamestore.com</p>
+        <a href="./maps.html"> Our locations
+        <div class="footer-line"></div>
+    </div>
+    
+    
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+      <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+      <script src="https://kit.fontawesome.com/b3414d13e5.js" crossorigin="anonymous"></script>
+
+      <script>
+        async function getSupplier(game){
+          try{
+            const supplier = await $.get("http://localhost:8081/suppliers/supplier/"+game.supplier);
+            return supplier;
+          } catch(err) {
+            console.log("Error fethcing supplier: ", err);
+            return null;
+          }
+        }
+
+        async function getAllGamesAndDisplay(){
+          try{
+            const games = await $.get("http://localhost:8081/games");
+            displayGames(games);
+          } catch (err) {
+              console.log("Error fetching games: ", err);
+          }
+        }
+
+        async function displayGames(games){
+          for (let i = 0; i < games.length; i += 3) {
+                const row = $("<div>").addClass("row game");
+                $(".games-container").append(row);
+                for (let j = i; j < i + 3 && j < games.length; j++) {
+                    const col = $("<div>").addClass("col-md-4 single-game-container");
+                    row.append(col);
+                    var currentGame = games[j];
+                    var title = currentGame.title.replace(/\s+/g, '').toLowerCase();
+                    const supplier = await getSupplier(currentGame);
+
+                    if (supplier !== null) {
+                      firstRow = $("<div>").addClass("row")
+                          .append($("<div>").addClass("col-md-5 title").text(currentGame.title))
+                          .append($("<div>").addClass("col-md-5 platform-logo").append($("<img>").attr("src", "../imgs/"+currentGame.platform+".png").attr("alt", "")));
+
+                        const secondRow = $("<div>").addClass("row")
+                          .append($("<div>").addClass("col-md-12 cover").append($("<img>").attr("src", "../imgs/"+title+".png").attr("alt", "")));
+
+                        const thirdRow = $("<div>").addClass("row")
+                          .append($("<div>").addClass("col-md-12 about about-"+j).html(currentGame.about+"<br>Release year: "+ currentGame.releaseYear+"<br> Supplier: "+supplier.name));
+                        
+                        const fourthRow = $("<div>").addClass("row")
+                          .append($("<div>").addClass("col-md-4").addClass("item-price").text("Price: "+currentGame.price+"$"))
+
+                          .append($("<div>").addClass("col-md-6 stars stars-"+j));
+
+                        const fifthRow = $("<div>").addClass("row")
+                          .append($("<div>").addClass("col-md-5").append($("<button>").addClass("add-to-cart-btn").text("Add to cart").attr('data-game-id', currentGame._id)
+                            .on('click', function(){
+                              $(this).prop('disabled', true);
+                              var gameID = $(this).attr("data-game-id")
+                              increase(gameID);
+                            })))
+
+                            if(localStorage.getItem("username") === "admin"){
+                              fifthRow.append($("<div>").addClass("col-md-4 edit-btn").append($("<button>").text("Edit").attr('data-info',currentGame._id)
+                                .on('click', function(){
+                                  var gameId = $(this).attr('data-info')
+                                  editGame(gameId)
+                                })))
+                            }
+                          
+                        
+                        col.append(firstRow).append(secondRow).append(thirdRow).append(fourthRow).append(fifthRow);
+
+                        for (let i = 0; i < currentGame.rating; i++) {
+                          $(".stars-"+j).append($("<img>").attr("src", "../imgs/star_filled.png").attr("alt", ""));
+                        }
+
+                        for (let i = currentGame.rating; i < 5; i++) {
+                          $(".stars-"+j).append($("<img>").attr("src", "../imgs/star_empty.png").attr("alt", ""));
+                        }
+
+                        $(".about-"+j).append($("<img>").attr("src", "../imgs/info.png").attr("alt", ""))
+                          .attr("data-toggle", "tooltip")
+                          .attr("title", "Supplier name: " + supplier.name + " | Supplier addr: " + supplier.address + " | Customer service number: " + supplier.csNumber);
+                    }
+                }
+            }
+
+            if(localStorage.getItem("savedGameIDs") != null){
+              const savedGameIDs = localStorage.getItem("savedGameIDs");
+              if (savedGameIDs) {
+                gamesIDs = JSON.parse(savedGameIDs);
+              }
+                gamesIDs.forEach((gameID)=> {
+                const buttonWithGameID = $(".add-to-cart-btn[data-game-id='" + gameID + "']");
+                buttonWithGameID.prop("disabled", true);
+              })
+            }
+            
+        }
+        $(".greet-user").html(`Hello, ${localStorage.getItem("username")}`)
+        
+        async function initializeAutocomplete() {
+            try {
+                const games = await $.get("http://localhost:8081/games");
+                const gameTitles = games.map(game => game.title); // Extract game titles
+                $("#searchInput").autocomplete({
+                    source: gameTitles, // Provide the array of game titles
+                    select: function(event, ui) {
+                        // When a title is selected, perform the search
+                        $(".searchText").val(ui.item.value);
+                        getGameByTitle();
+                    }
+                });
+            } catch (err) {
+                console.log("Error fetching games: ", err);
+            }
+        }
+
+        const itemPrices = [];
+        function convertCurrency(){
+          $('#currencySelector').on('change', async function()
+          {
+            const selectedCurrency = $(this).val();
+            const apiKey = '677f1e0ae60a3c30e4c9446a';
+            const apiUrl = 'https://v6.exchangerate-api.com/v6/677f1e0ae60a3c30e4c9446a/latest/USD';
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            const rates = data.conversion_rates;
+
+            var currencySymbol;
+            switch(selectedCurrency)
+            {
+              case 'USD': currencySymbol = '$'
+              break;
+              case 'EUR': currencySymbol = '€'
+              break;
+              case 'GBP': currencySymbol = '£'
+              break;
+              case 'ILS': currencySymbol = '₪'
+              break;
+            }
+
+            if(itemPrices.length < 1)
+            {
+            $('.item-price').each(function()
+            {
+                itemPrices.push(Number($(this).text().match(/\d+/g)));
+            });
+          }
+            if(itemPrices.length > 0)
+            {
+              var i = 0;
+              $('.item-price').each(function()
+              {
+                if(i < itemPrices.length)
+                {
+                $(this).html('Price: '+ (itemPrices[i] * rates[selectedCurrency]).toFixed() + currencySymbol);
+                  i++;
+                }
+              });
+            }
+          });
+        }
+
+        
+        $(document).ready(function () {
+            
+            if(!localStorage.getItem("savedGameIDs")  && !localStorage.getItem("numItemsOnCart") && !localStorage.getItem("amountPerGame")){
+              let array = [];
+              let amountPerGame = {}
+              localStorage.setItem("savedGameIDs", JSON.stringify(array));
+              localStorage.setItem("amountPerGame", JSON.stringify(amountPerGame));
+              localStorage.setItem("numItemsOnCart", 0);
+            }
+
+            $(".icon-container").on("click", function(){
+              window.location = "./chat.html"
+            })
+            if(localStorage.getItem("username") === "admin"){
+              $("#adminDropdown").css("display", "block");
+           }
+            
+            
+            getAllGamesAndDisplay();
+            initializeAutocomplete();
+            convertCurrency()
+            var checkboxes = $(".form-check-input");
+            var filterBtn = $("#filterBtn");
+
+            checkboxes.on("click", function() {
+            var allUnchecked = true;
+            checkboxes.each(function() {
+                if ($(this).prop("checked")) {
+                    allUnchecked = false;
+                    return false; // Exit the loop early
+                }
+            });
+            filterBtn.prop("disabled", allUnchecked);
+            });
+
+            updateItemCount(Number(localStorage.getItem("numItemsOnCart")));
+            
+            
+        });
+        const itemCountElement = document.querySelector('.item-count');
+
+        function updateItemCount(count) {
+          itemCountElement.textContent = count;
+        }
+        function increase(gameID){
+          const increaseButton = document.querySelector('.add-to-cart-btn');
+
+          let total = Number(localStorage.getItem("numItemsOnCart")) + 1;  
+          updateItemCount(total);
+          let gamesIdArray =  JSON.parse(localStorage.getItem("savedGameIDs"));
+          let amountPerGame = JSON.parse(localStorage.getItem("amountPerGame"));
+          amountPerGame[gameID] = 1;
+          gamesIdArray.push(gameID);
+          localStorage.setItem("savedGameIDs", JSON.stringify(gamesIdArray));
+          localStorage.setItem("numItemsOnCart", total);
+          localStorage.setItem("amountPerGame", JSON.stringify(amountPerGame));
+        }
+
+        async function filterGames(){
+          var url = "http://localhost:8081/games/filterGames?price="
+          
+          if($("#priceLess20").prop("checked")){
+            url+="lessThan20,";
+          } 
+          if($("#price20to50").prop("checked")){
+            url+="20to50,"
+          } 
+          if($("#priceMore50").prop("checked")){
+            url+="moreThen50"
+          }
+
+          url+="&platform="
+          if($("#XBOX_ONE").prop("checked")){
+            url+="XBOX_ONE,";
+          } 
+          if($("#XBOX360").prop("checked")){
+            url+="XBOX_360,"
+          } 
+          if($("#PS4").prop("checked")){
+            url+="PS4,"
+          }
+          if($("#PS5").prop("checked")){
+            url+="PS5,";
+          } 
+          if($("#PC").prop("checked")){
+            url+="PC"
+          }
+
+          url+="&rating="
+          if($("#rating2").prop("checked")){
+            url+="2,"
+          } 
+          if($("#rating3").prop("checked")){
+            url+="3,"
+          }
+          if($("#rating4").prop("checked")){
+            url+="4,";
+          } 
+          if($("#rating5").prop("checked")){
+            url+="5,"
+          }
+          url = url.slice(0,-1);
+          const games = await $.get(url);
+          $(".games-container").empty();
+          displayGames(games);
+          
+        }
+        
+        function navigateToMainPage(){
+            $(".searchText").val("");
+            $(".games-container").empty();
+            getAllGamesAndDisplay();
+            var checkboxes = $(".form-check-input");
+            checkboxes.each(function() {
+                $(this).prop("checked",false)
+            });
+            $("#filterBtn").prop("disabled", true);
+
+        }
+    
+        async function getGameByTitle(){
+          var title = $(".searchText").val();
+          const game = await $.get("http://localhost:8081/games/search?title="+title);
+          if(game){
+            $(".games-container").empty();
+            displayGames(game);
+          }
+          else{
+            $(".searchText").val("Game Not Found");
+          }
+        } 
+    
+        function editGame(gameId){
+            localStorage.setItem("editedGameId", gameId);
+            window.location.href = './updateGameForm.html'
+        }
+
+        function groupByYear(){
+          $.get("http://localhost:8081/games/groupByReleaseYear", function(data){
+              $(".games-container").empty();
+              const row = $("<div>").addClass("row")
+              const col = $("<div>").addClass("col-md-6");
+              row.append(col);  
+              $(".games-container").append(row)
+              var selectYear = $("<select>").addClass("year-select");
+              var defaultOption = $("<option>").attr("value", "-").text("Select Year");
+              selectYear.append(defaultOption);
+              var gamesByYear={};
+              for(let i=0; i < data.length; i++){
+                var year = String(data[i]._id.releaseYear); 
+                var option = $("<option>").attr("value", year).text(year)
+                selectYear.append(option);
+                gamesByYear[year] = data[i].games;
+              }
+              col.append(selectYear);
+              selectYear.on("change", function(){
+                var year = $(this).val();
+                clearPageFromAllGames();
+                if(year != '-'){
+                  const games = gamesByYear[year];
+                  displayGames(games);
+                }
+                
+              })
+          })  
+        }
+
+        function groupByRating(){
+          $.get("http://localhost:8081/games/groupByRating", function(data){
+              $(".games-container").empty();
+              const row = $("<div>").addClass("row")
+              const col = $("<div>").addClass("col-md-6");
+              row.append(col);  
+              $(".games-container").append(row)
+              var selectRating = $("<select>").addClass("rating-select");
+              var defaultOption = $("<option>").attr("value", "-").text("Select Rating");
+                selectRating.append(defaultOption);
+              var gamesByRating={};
+              for(let i=0; i < data.length; i++){
+                var rating = String(data[i]._id.rating); 
+                var option = $("<option>").attr("value", rating).text(rating)
+                selectRating.append(option);
+                gamesByRating[rating] = data[i].games;
+              }
+              col.append(selectRating);
+              selectRating.on("change", function(){
+                var rating = $(this).val();
+                clearPageFromAllGames();
+                if(rating != '-'){
+                  const games = gamesByRating[rating];
+                  displayGames(games);
+                }
+                
+              })
+          })  
+        }
+        
+        function clearPageFromAllGames(){
+            // Get the container element
+            var gamesContainer= document.querySelector(".games-container");
+
+            // Get all elements with the class "game" within the container
+            var gameElements = gamesContainer.querySelectorAll(".game");
+
+            // Loop through the selected game elements and remove them
+            for (var i = 0; i < gameElements.length; i++) {
+              gamesContainer.removeChild(gameElements[i]);
+            }
+        }
+
+        function groupBy(){
+          if($(".group-by").val() == "releaseYear"){
+            groupByYear();
+          } 
+          else if($(".group-by").val() == "rating") {
+            groupByRating();
+          }
+        }
+    </script>
+</body>
+</html>
+

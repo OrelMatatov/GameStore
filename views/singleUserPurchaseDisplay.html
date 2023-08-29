@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <style>
+        .game-cover img{
+            width: 100px;
+            height: 110px;
+        }
+
+        .purchase-details{
+            margin-left: 70px;
+            margin-top: 12px;
+            width: 150px;
+        }
+
+        .single-purchase-container{
+            border: 2px solid black;
+            padding: 20px;
+            margin-right: 60px;
+            background-color: azure;
+        }
+
+        .additional-details{
+            margin-left: 5px;
+        }
+                /* Style for the cart icon container */
+        .cart-icon {
+            position: relative;
+            display: inline-block;
+            
+        }
+
+        /* Style for the cart icon image */
+        .cart-icon-img {
+            display: block;
+            max-width: 100%;
+            width: 20px; /* Adjust as needed */
+            height: 20px;
+            position: absolute;
+            top:20px;
+            right: 30px;
+
+        }
+
+        /* Style for the item count badge */
+        .item-count {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            transform: translate(50%, -50%); /* Centering the badge */
+            font-size: 12px; /* Adjust as needed */
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%; /* Make it circular */
+            padding: 3px 6px;
+
+   
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+        
+        h1{
+            text-align: center;
+        }
+
+        .single-purchase-container{
+            margin-top: 10px;
+        }
+
+        
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="./homePage.html">Game Store</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="./homePage.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./userProfile.html">Profile</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./singleUserPurchaseDisplay.html">Purchases</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="./suppliersDisplay.html">Suppliers</a>
+              </li>
+            <li class="nav-item dropdown"  id="adminDropdown" style="display: none;">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Admin
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./gameCreationForm.html">Add Game</a></li>
+                <li><a class="dropdown-item" href="./createSupplierForm.html">Add Supplier</a></li>
+                <li><a class="dropdown-item" href="./usersDisplay.html">Users List</a></li>
+                <li><a class="dropdown-item" href="./usersPurchasesDisplay.html">Purchases List</a></li>
+                <li><a class="dropdown-item" href="./statisticGraphs.html">Statistical Graphs</a></li>
+            </ul>
+            </li>
+            
+          </ul>
+           
+          <div clsss="cart-icon">
+            <a href="./cart.html">
+            <img src="../imgs/cart.png" alt="" class="cart-icon-img">
+            <span class="item-count badge badge-danger">0</span>
+          </a>
+          </li>         
+        </div>
+      </nav>
+
+    
+    
+    <div class="container purchases-container">
+        
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+    <script>
+        $(document).ready(async function(){
+            try{
+                if(localStorage.getItem("username") === "admin"){
+                    $("#adminDropdown").css("display","block"); 
+                }
+                const itemCountElement = document.querySelector('.item-count');
+                itemCountElement.textContent = localStorage.getItem("numItemsOnCart");
+                var userId = localStorage.getItem("userId");
+                if(userId == null){
+                    console.log("cannot display user purchase history");
+                    return;
+                }
+                const username = localStorage.getItem("username");
+                if(username){
+                    const header = document.createElement("h1");
+                    header.innerHTML = `${username} Purchase History`
+                    $(".purchases-container").append(header);
+                }
+                const purchases = await $.get("http://localhost:8081/purchases/userPurchases/"+userId);
+                if(purchases == null){
+                    return;
+                }
+                if(purchases.length == 0){
+                    $(".purchases-container").append($("<h4>").text("No purchases yet"));
+                }
+                else{
+                    display(purchases);
+                }
+            } catch(err){
+                console.error("Error: ", err);
+            }
+            
+        })
+
+        async function display(purchases){
+            for (let i = 0; i < purchases.length; i += 3) {
+                    const row = $("<div>").addClass("row");
+                    $(".purchases-container").append(row);
+                    for (let j = i; j < i + 3 && j < purchases.length; j++) { //Responsible for displaying only 3 items per row
+                        const purchaseItem = document.createElement("div");
+                        purchaseItem.className = "col-md-3 single-purchase-container";
+                        row.append(purchaseItem)
+                        for(let k=0; k<purchases[i].gamesId.length; k++){
+                            const quantity = purchases[j].gamesId[k].quantity;
+                            const game = await $.get("http://localhost:8081/games/game/"+purchases[j].gamesId[k].gameId)
+                            if(game == null){
+                                return;
+                            }
+
+                            var title = game.title.replace(/\s+/g, '').toLowerCase();
+                            const singleGame = document.createElement('div');
+                            singleGame.classList.add('row');
+                            singleGame.innerHTML = `
+                                <div class="col-md-2 game-cover">
+                                    <img src="../imgs/${title}.png" alt="${game.title}">
+                                </div>
+                                <div class="col-md-3 purchase-details">
+                                    ${game.title} <br>
+                                    x${quantity} <br>
+                                    ${game.price}€
+                                </div>
+                            `
+                            purchaseItem.append(singleGame)
+
+                            if(k != purchases[j].gamesId.length-1){
+                                purchaseItem.innerHTML+="<br>"
+                            }
+                        }
+                       
+                        const additionalDet = document.createElement('div');
+                        additionalDet.classList.add('row', 'additional-details');
+
+                        additionalDet.innerHTML = `
+                                total: ${purchases[j].totalPrice}€ <br>
+                                purchased at: ${purchases[j].date.split('T')[0]} <br>
+                            `
+                        purchaseItem.append(additionalDet)
+
+                        }
+
+                }
+        }
+    
+    </script>
+</body>
+</html>

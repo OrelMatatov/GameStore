@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+    <style>
+        .user-icon img{
+            width: 115px;
+            height: 90px;
+            margin-left: 20px;
+        }
+
+        span{
+            font-size: 20px;
+        }
+        input[type="button"]{
+            width: 12%;
+        }
+
+        input[type="text"], input[type="number"], #selectGender{
+            width: 50%;
+        }
+
+        .user-profile-container{
+            margin-top: 10px;
+        }
+
+        .cart-icon {
+            position: relative;
+            display: inline-block;
+            
+        }
+
+        /* Style for the cart icon image */
+        .cart-icon-img {
+            display: block;
+            max-width: 100%;
+            width: 20px; /* Adjust as needed */
+            height: 20px;
+            position: absolute;
+            top:20px;
+            right: 30px;
+
+        }
+
+        /* Style for the item count badge */
+        .item-count {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            transform: translate(50%, -50%); /* Centering the badge */
+            font-size: 12px; /* Adjust as needed */
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%; /* Make it circular */
+            padding: 3px 6px;
+
+   
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        h1{
+            margin-left: 60px;
+            margin-top: 20px;
+        }
+
+
+    </style>
+
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="./homePage.html">Game Store</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="./homePage.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Profile</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./singleUserPurchaseDisplay.html">Purchases</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="./suppliersDisplay.html">Suppliers</a>
+              </li>
+            <li class="nav-item dropdown"  id="adminDropdown" style="display: none;">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Admin
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./gameCreationForm.html">Add Game</a></li>
+                <li><a class="dropdown-item" href="./createSupplierForm.html">Add Supplier</a></li>
+                <li><a class="dropdown-item" href="./usersDisplay.html">Users List</a></li>
+                <li><a class="dropdown-item" href="./usersPurchasesDisplay.html">Purchases List</a></li>
+                <li><a class="dropdown-item" href="./statisticGraphs.html">Statistical Graphs</a></li>
+              </ul>
+            </li>
+            
+          </ul>
+           
+          <div clsss="cart-icon">
+            <a href="./cart.html">
+            <img src="../imgs/cart.png" alt="" class="cart-icon-img">
+            <span class="item-count badge badge-danger">0</span>
+          </a>
+          </li>         
+        </div>
+      </nav>
+    
+    <h1>My Profile</h1>
+    <div class="container user-profile-container">
+        
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(async function(){
+            const itemCountElement = document.querySelector('.item-count');
+            itemCountElement.textContent = localStorage.getItem("numItemsOnCart");
+            if(localStorage.getItem("username") === "admin"){
+              $("#adminDropdown").css("display", "block");
+           }
+            
+            displayUserProfile();
+        })
+
+        async function displayUserProfile(){
+            var userId = localStorage.getItem("userId");
+            if(userId == null){
+                console.log("cannot display user info");
+                return;
+            }
+            const user = await $.get("http://localhost:8081/users/user/"+userId);
+            if(user){
+                $(".user-profile-container").html(`
+                
+                <div class="row user-icon">
+                    <img src="../imgs/user-icon.png" alt="User">
+                </div>
+                <div class="row">
+                    <span>Username: ${user.username}</span>
+                </div> <br>
+                <div class="row">
+                    <span>Age: ${user.age}</span>
+                </div><br>
+                <div class="row">
+                    <span>City: ${user.city}</span>
+                </div><br>
+                <div class="row">
+                    <span>Gender: ${user.gender}</span>
+                </div><br>
+                <div class="row">
+                    <input type="button" value="Edit Profile" onclick="displayEditProfile()">
+                </div>               
+                
+                `)
+            }
+        }
+
+        async function displayEditProfile(){
+            var userId = localStorage.getItem("userId");
+            if(userId == null){
+                console.log("cannot display user info");
+                return;
+            }
+            const user = await $.get("http://localhost:8081/users/user/"+userId);
+            $(".user-profile-container").empty();
+            $(".user-profile-container").html(`
+                
+                <div class="row user-icon">
+                    <img src="../imgs/user-icon.png" alt="User">
+                </div>
+                <div class="row">
+                    <span>Username: </span> <input type="text" value="${user.username}" id="username">
+                </div> <br>
+                <div class="row">
+                    <span>Age: </span> <input type="number" value="${user.age}" id="age">
+                </div><br>
+                <div class="row">
+                    <span>City: </span> <input type="text" value="${user.city}" id="city">
+                </div><br>
+                <div class="row">
+                    <span>Gender: </span> 
+                    <select id="selectGender">
+                            <option value="Male"> Male </option>
+                            <option value="Female"> Female </option>
+                            <option value="Other"> Other </option>
+                    </select>
+                </div><br>
+                <div class="row">
+                    <input type="button" value="Edit" class="edit-btn" onclick="launchEditProfile()">
+                </div>               
+                
+                `)
+
+                const selectGender = document.getElementById("selectGender");
+
+                // Loop through the options and set the selected attribute
+                for (let option of selectGender.options) {
+                    if (option.value === user.gander) {
+                        option.selected = true;
+                    }
+                }
+
+        }
+
+        function checkAgeFieldTxt(age){
+            const regex = /^[1-9][0-9]?$/;
+            return regex.test(age);
+        }
+
+        async function launchEditProfile(){
+            var userId = localStorage.getItem("userId");
+            if(userId == null){
+                console.log("cannot display user info");
+                return;
+            }
+            const user = await $.get("http://localhost:8081/users/user/"+userId);
+            if(user){
+                const uname = $("#username").val();
+                if(uname === ''){
+                    alert("username is empty")
+                    return;
+                }
+
+                if(uname === "admin" && localStorage.getItem("username") !== "admin"){
+                    alert("You can change your name to admin")
+                    return;
+                }
+
+                const age = $("#age").val();
+                if(!checkAgeFieldTxt(age) || age === ''){
+                    alert("Age field txt not correct")
+                    return;
+                }
+
+                const city = $("#city").val();
+                if(city === ''){
+                    alert("city is empty")
+                    return;
+                }
+
+                const gender = $("#selectGender").val();
+
+                const data = {
+                    username: uname,
+                    age: age,
+                    city: city, 
+                    password: user.password,
+                    gender: gender
+                }
+
+                $.ajax({
+                    url:"http://localhost:8081/users/user/"+userId,
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                }).done(function(){
+                    alert("The user successfully updated");
+                    $(".user-profile-container").empty();
+                    displayUserProfile();
+
+                }).fail(function(err){
+                    console.log("Error: ", err);
+                })
+            }
+            
+            
+        }
+
+    </script>
+
+</body>
+</html>

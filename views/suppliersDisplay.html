@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <style>
+        .supplier-icon img{
+            width: 85px;
+            height: 60px;
+        }
+
+        .supplier{
+            padding: 10px;
+            border: 2px solid black;
+            text-align: center;
+            margin-left: 30px;
+            margin-top: 20px;
+            width: 250px;
+        }
+
+        h1{
+            text-align: center;
+        }
+
+        .delete-btn{
+          margin-bottom: 5px;
+          margin-top: 5px;
+        }
+
+
+        span{
+            font-size: 20px;
+        }
+        input[type="button"]{
+            width: 10%;
+        }
+
+        input[type="text"], input[type="number"], #selectGender{
+            width: 50%;
+        }
+
+        .user-profile-container{
+            margin-top: 10px;
+        }
+
+        .cart-icon {
+            position: relative;
+            display: inline-block;
+            
+        }
+
+        .cart-icon-img {
+            display: block;
+            max-width: 100%;
+            width: 20px; 
+            height: 20px;
+            position: absolute;
+            top:20px;
+            right: 30px;
+
+        }
+
+        .item-count {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            transform: translate(50%, -50%); 
+            font-size: 12px; 
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%; 
+            padding: 3px 6px;
+
+   
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        h1{
+            margin-left: 60px;
+            margin-top: 20px;
+        }
+        
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="./homePage.html">Game Store</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="./homePage.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./userProfile.html">Profile</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./singleUserPurchaseDisplay.html">Purchases</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="./suppliersDisplay.html">Suppliers</a>
+              </li>
+            <li class="nav-item dropdown" id="adminDropdown" style="display: none;">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Admin
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./gameCreationForm.html">Add Game</a></li>
+                <li><a class="dropdown-item" href="./createSupplierForm.html">Add Supplier</a></li>
+                <li><a class="dropdown-item" href="./usersDisplay.html">Users List</a></li>
+                <li><a class="dropdown-item" href="./usersPurchasesDisplay.html">Purchases List</a></li>
+                <li><a class="dropdown-item" href="./statisticGraphs.html">Statistical Graphs</a></li>
+              </ul>
+            </li>
+          </ul>
+
+          <div clsss="cart-icon">
+            <a href="./cart.html">
+            <img src="../imgs/cart.png" alt="" class="cart-icon-img">
+            <span class="item-count badge badge-danger">0</span>
+          </a>
+          </li>         
+        </div>
+                    
+        </div>
+      </nav>
+
+    
+    <h1>Suppliers List</h1>
+    <div class="container supplier-container">   
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <script>
+        $(document).ready(async function(){
+            const itemCountElement = document.querySelector('.item-count');
+            itemCountElement.textContent = localStorage.getItem("numItemsOnCart");
+            if(localStorage.getItem("username") === "admin"){
+              $("#adminDropdown").css("display", "block");
+           }
+
+            displaySuppliers();
+            //TODO delete all the games of the supplier
+            $(".delete-btn").on('click', async function(){
+              const id = $(this).attr("data-supplier-id");
+              await $.ajax({
+                  url: "http://localhost:8081/suppliers/supplier/"+id,
+                  type: "DELETE",
+                  success: function(response){
+                      alert("Supplier deleted successfully")
+                      displaySuppliers();
+                  }
+              })
+            })
+
+        })
+
+        async function displaySuppliers(){
+            const suppliers = await $.get("http://localhost:8081/suppliers")
+            for (let i = 0; i < suppliers.length; i += 3) {
+                    const row = $("<div>").addClass("row");
+                    $(".supplier-container").append(row);
+                    for (let j = i; j < i + 3 && j < suppliers.length; j++) {
+                        var supplierContainer = $("<div>").addClass("col-md-2 supplier d-flex flex-column align-items-center justify-content-center");
+                        var supplierIconRow = $("<div>").addClass("row supplier-icon");
+                        var supplierIconImg = $("<img>").attr("src", "../imgs/supplier-icon.png").attr("alt", "");
+                        supplierIconRow.append(supplierIconImg);
+                        const content = $("<div>").addClass("row");
+                        content.html(`
+                            Name: ${suppliers[j].name} <br>
+                            Address: ${suppliers[j].address} <br>
+                            Customer Service #: ${suppliers[j].csNumber}<br>
+                        `);
+
+                        const deleteBtn = $("<div>").addClass("row");
+                        deleteBtn.html(`
+                          <button class="edit-btn" data-supplier-id="${suppliers[j]._id}"> Edit </button>
+                          <button class="delete-btn" data-supplier-id="${suppliers[j]._id}"> Delete </button>
+                        `)
+                        
+                        supplierContainer.append(supplierIconRow, content, deleteBtn);
+                        row.append(supplierContainer);
+
+                        
+                        
+                    }
+                }
+
+                $(".edit-btn").on('click', function(){
+                    const id = $(this).attr("data-supplier-id");
+                    displayEditSupplierPage(id)
+                })
+
+               
+        }
+    
+        async function displayEditSupplierPage(id){
+            $(".supplier-container").empty();
+            const supplier = await $.get("http://localhost:8081/suppliers/supplier/"+id);
+            $(".supplier-container").html(`
+                <div class="row supplier-icon">
+                    <img src="../imgs/supplier-icon.png" alt="User">
+                    </div> <br>
+                    <div class="row">
+                        <span>Name: </span> <input type="text" value="${supplier.name}" id="name">
+                    </div> <br>
+                    <div class="row">
+                        <span>Address: </span> <input type="text" value="${supplier.address}" id="address">
+                    </div> <br>
+                    <div class="row">
+                        <span>Customer Service #: </span> <input type="text" value="${supplier.csNumber}" id="csNumber">
+                    </div> <br>
+                    <div class="row">
+                        <input type="button" value="Edit" class="launch-edit-btn" data-supp-id="${supplier._id}">
+                </div> `)
+
+                $(".launch-edit-btn").on('click', function(){
+                    const id = $(this).attr("data-supp-id");
+                    launchEditSupplier(id)
+                })
+
+        }
+        
+        function validateCSNumber(number){
+            const regex = /^[0-9\s()-]*$/;
+            return regex.test(number);
+        }
+
+
+        function launchEditSupplier(id){
+                const name = $("#name").val();
+                const address = $("#address").val();
+                const csNumber = $("#csNumber").val();
+                console.log(name); console.log(address); console.log(csNumber);
+                if(name === '' || address === '' || csNumber === ''){
+                    alert("One of the fields is empty")
+                    return;
+                }
+
+                if(!validateCSNumber(csNumber)){
+                    alert("Your input is not a phone number")
+                    return;
+                }
+                const data = {
+                    name: name,
+                    address: address,
+                    csNumber: csNumber
+                }
+
+                $.ajax({
+                    url:"http://localhost:8081/suppliers/supplier/"+id,
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                }).done(function(){
+                    alert("Supplier successfully updated");
+                    $(".supplier-container").empty();
+                    displaySuppliers();
+
+                }).fail(function(err){
+                    console.log("Error: ", err);
+                })
+            
+            
+           
+        }
+    </script> 
+</body>
+</html>

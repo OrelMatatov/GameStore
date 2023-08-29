@@ -1,0 +1,136 @@
+<html>
+    <head>
+        <title>Register Page</title>
+        <style>
+            body {
+                background-color: #f2f2f2;
+                font-family: Arial, sans-serif;
+              }
+        
+              .container {
+                background-color: #fff;
+                border-radius: 10px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+                padding: 20px;
+                width: 300px;
+                margin: 0 auto;
+                margin-top: 100px;
+              }
+        
+              .container label {
+                display: block;
+                margin-bottom: 10px;
+              }
+        
+              .container input,
+              .container select {
+                width: 100%;
+                padding: 8px;
+                border-radius: 4px;
+                border: 1px solid #ccc;
+                margin-bottom: 15px;
+              }
+        
+              .container button {
+                background-color: #4c98af;
+                color: #fff;
+                padding: 10px 15px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+              }
+
+              label{
+                margin-top: 10px;
+              }
+            </style>
+    </head>
+    
+    <body>
+      <div class="container">
+        <form action="http://localhost:8081/users" method="POST">
+        <label for="username"><b>Register Page</b></label>
+        <input type="text" placeholder="username" id="username" name="username" required>
+        <label for="password"></label>
+        <input type="password" placeholder="password" id="password" name="password" required>
+        <label for="age"></label>
+        <input type="number" placeholder="age" id="age" name="age" required>
+        <label for="city"></label>
+        <input type="text" placeholder="city" id="city" name="city" required>
+        <select id="selectGender">
+          <option value="none">Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+        <button onclick="func()">Register</button>
+        <label>Already have an account? <a href="./logIn.html">Sign in</label>
+  </form>
+     </div>
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+     <script>
+      $(function(){
+          $('form').on('submit', function(event){
+              event.preventDefault(); 
+              var url = $(this).attr('action'); 
+              var username = $('#username').val(); 
+              var password = $('#password').val();
+              var age = $('#age').val();
+              var city = $('#city').val();
+              var gender = $('#selectGender').val();
+
+              if(username === 'admin' || password === 'admin'){
+                alert("You cannot be the admin");
+                return;
+              }
+              if(username === '' || age === '' || city === '' || gender === 'none'){
+                alert("One of the fields are empty")
+                return;
+              }
+
+              var data = {
+                username: username,
+                password: password,
+                age: age,
+                city: city,
+                gender: gender
+              };
+
+              console.log(data);
+              $.post(url, data, function(response){
+                window.location.href = './logIn.html'
+              })
+                
+          });
+      });
+      
+        function func()
+        {
+          var inputTxt1=document.getElementById("username");
+          var inputTxt2=document.getElementById("password");
+          var inputTxt3=document.getElementById("age");
+          var inputTxt4=document.getElementById("city");
+          
+          var selecteduname=inputTxt1.value
+          var selectedupass=inputTxt2.value
+          var selecteduage=inputTxt3.value
+          var selecteducity=inputTxt4.value
+          var agePattern = /^[0-9]+$/; // Regular expression pattern to match only numbers
+          var uppercasePattern = /[A-Z]/; // Regular expression pattern to match uppercase letters
+          var specialCharPattern = /[!@#$%^&*()?/*`~<>]/; // Regular expression pattern to match special characters ($, %, &)
+
+
+      
+           if (selectedupass>=8||!uppercasePattern.test(selectedupass) || !specialCharPattern.test(selectedupass)) {
+            alert("for your security of your account, \n Please enter a password with at least one capital letter and one special character, at least 8 characters.");
+            }
+        
+         if (selecteduage < 12 || selecteduage > 120||!agePattern.test(selecteduage)) {
+              alert("Only Users between the ages 12-120 can Register to this site");
+          }
+        
+  }
+        </script>
+    </body>
+</html>
