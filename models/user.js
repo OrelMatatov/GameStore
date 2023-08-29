@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const User = new Schema({
-    name:{
+    username:{
         type: String,
         required:true
     },
@@ -21,6 +21,11 @@ const User = new Schema({
         type: String
     },
 
+    gender: {
+        type: String,
+        required: true
+    },
+
     permissions: {
         type: Array,
         default: []
@@ -28,5 +33,3 @@ const User = new Schema({
 })
 
 module.exports = mongoose.model('User', User)
-
-//TODO add supply
