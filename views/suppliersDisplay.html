@@ -185,7 +185,7 @@
                         const deleteBtn = $("<div>").addClass("row");
                         deleteBtn.html(`
                           <button class="edit-btn" data-supplier-id="${suppliers[j]._id}"> Edit </button>
-                          <button class="delete-btn" data-supplier-id="${suppliers[j]._id}"> Delete </button>
+                          <button class="delete-btn" data-supplier-id="${suppliers[j]._id}" style="display:none"> Delete </button>
                         `)
                         
                         supplierContainer.append(supplierIconRow, content, deleteBtn);
@@ -196,6 +196,9 @@
                     }
                 }
 
+                if(localStorage.getItem("username") === "admin"){
+                  $('.delete-btn').css("display","block")
+                }
                 $(".edit-btn").on('click', function(){
                     const id = $(this).attr("data-supplier-id");
                     displayEditSupplierPage(id)
