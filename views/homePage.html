@@ -441,19 +441,6 @@
                   </select>
               </div>
               </div>
-
-
-              <!--<div class="col-md-4">
-                <div class="greet-user"></div>
-                <div class="currency-converter">
-                  <label for="currencySelector">Select Currency:</label>
-                  <select id="currencySelector">
-                      <option value="USD">USD</option>
-                      <option value="EUR">EUR</option>
-                      <option value="GBP">GBP</option>
-                      <option value="ILS">ILS</option>
-                  </select>
-              </div>-->
               
             </div>
 
@@ -462,17 +449,16 @@
             </div>
           
           </main>
-          
         </div>
 
       </div>
 
-      <div class="footer">
+      <footer class="footer">
         <p>&copy; 2023 Game Store. All rights reserved.</p>
         <p>Contact us: info@gamestore.com</p>
         <a href="./maps.html"> Our locations
         <div class="footer-line"></div>
-    </div>
+    </footer>
     
     
       <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -523,7 +509,7 @@
                           .append($("<div>").addClass("col-md-12 cover").append($("<img>").attr("src", "../imgs/"+title+".png").attr("alt", "")));
 
                         const thirdRow = $("<div>").addClass("row")
-                          .append($("<div>").addClass("col-md-12 about about-"+j).html(currentGame.about+"<br>Release year: "+ currentGame.releaseYear+"<br> Supplier: "+supplier.name));
+                          .append($("<aside>").addClass("col-md-12 about about-"+j).html(currentGame.about+"<br>Release year: "+ currentGame.releaseYear+"<br> Supplier: "+supplier.name));
                         
                         const fourthRow = $("<div>").addClass("row")
                           .append($("<div>").addClass("col-md-4").addClass("item-price").text("Price: "+currentGame.price+"$"))
@@ -794,6 +780,11 @@
               var defaultOption = $("<option>").attr("value", "-").text("Select Year");
               selectYear.append(defaultOption);
               var gamesByYear={};
+              data = data.sort((a,b)=> {
+                if(a._id.releaseYear < b._id.releaseYear){
+                  return -1;
+                }
+              });
               for(let i=0; i < data.length; i++){
                 var year = String(data[i]._id.releaseYear); 
                 var option = $("<option>").attr("value", year).text(year)
@@ -824,6 +815,11 @@
               var defaultOption = $("<option>").attr("value", "-").text("Select Rating");
                 selectRating.append(defaultOption);
               var gamesByRating={};
+              data = data.sort((a,b)=> {
+                if(a._id.rating < b._id.rating){
+                  return -1;
+                }
+              });
               for(let i=0; i < data.length; i++){
                 var rating = String(data[i]._id.rating); 
                 var option = $("<option>").attr("value", rating).text(rating)
