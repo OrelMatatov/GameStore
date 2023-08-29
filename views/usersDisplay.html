@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .user-icon img{
+            width: 65px;
+            height: 40px;
+        }
+
+        .user{
+            border: 2px solid black;
+            text-align: center;
+            margin-left: 30px;
+            margin-top: 20px;
+            width: 200px;
+        }
+
+        h1{
+            text-align: center;
+        }
+
+        .delete-btn{
+          margin-bottom: 5px;
+          margin-top: 5px;
+        }
+
+        .cart-icon {
+          position: relative;
+          display: inline-block;
+          
+        }
+
+        /* Style for the cart icon image */
+        .cart-icon-img {
+          display: block;
+          max-width: 100%;
+          width: 20px; /* Adjust as needed */
+          height: 20px;
+          position: absolute;
+          top:20px;
+          right: 30px;
+
+        }
+
+        /* Style for the item count badge */
+        .item-count {
+          position: absolute;
+          top: 15px;
+          right: 25px;
+          transform: translate(50%, -50%); /* Centering the badge */
+          font-size: 12px; /* Adjust as needed */
+          min-width: 20px;
+          height: 20px;
+          border-radius: 50%; /* Make it circular */
+          padding: 3px 6px;
+
+
+          background-color: red;
+          color: white;
+          border-radius: 50%;
+          padding: 4px 8px;
+          font-size: 12px;
+        }
+
+        #cityContainer {
+            max-height: 150px; /* Set the maximum height of the container */
+            overflow-y: auto; /* Enable vertical scrolling */
+            border: 1px solid #ccc;
+            padding: 5px;
+            width: 170px;
+        }
+          
+              label {
+                  display: block;
+                  margin: -2px 2px;
+              }
+
+              .icon-con{
+              position: absolute;
+              top:20px;
+              right: 25px;
+            }
+
+        
+        
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="./homePage.html">Game Store</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="./homePage.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./userProfile.html">Profile</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./singleUserPurchaseDisplay.html">Purchases</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./suppliersDisplay.html">Suppliers</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Admin
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./gameCreationForm.html">Add Game</a></li>
+                <li><a class="dropdown-item" href="./createSupplierForm.html">Add Supplier</a></li>
+                <li><a class="dropdown-item" href="#">Users List</a></li>
+                <li><a class="dropdown-item" href="./usersPurchasesDisplay.html">Purchases List</a></li>
+                <li><a class="dropdown-item" href="./statisticGraphs.html">Statistical Graphs</a></li>
+              </ul>
+            </li>
+          </ul>
+
+          <div clsss="cart-icon">
+            <a href="./cart.html">
+            <!--<img src="../imgs/cart.png" alt="" class="cart-icon-img">-->
+          <div class="icon-con">
+            <i class="fa-solid fa-cart-shopping fa-2x" style="color: #3d84f0;"></i>
+          </div> 
+            <span class="item-count badge badge-danger">0</span>
+          </a>
+          </li>         
+        </div>
+                 
+                    
+        </div>
+      </nav>
+
+
+      <div class="container-fluid">
+        <div class="row">
+          <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <div class="position-sticky">
+
+              <h4>Age</h4>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="ageBelow18">
+                <label class="form-check-label" for="ageBelow18">
+                  Below 18
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="age18to30">
+                <label class="form-check-label" for="age18to30">
+                  18 to 30
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="above30">
+                <label class="form-check-label" for="above30">
+                  Above 30
+                </label>
+              </div>
+
+
+              <h4 class="mt-3">Gender</h4>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="male">
+                <label class="form-check-label" for=" male">
+                  Male
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="female">
+                <label class="form-check-label" for="female">
+                  Female
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="other">
+                <label class="form-check-label" for="other">
+                  Other
+                </label>
+              </div>
+
+
+              <h4 class="mt-3">City</h4>
+              <div id="cityContainer">
+                
+            </div>
+            <br>
+            <br>
+              <button type="button" class="btn btn-primary" onclick="filterUsers()" id="filterBtn" disabled>Filter</button>
+            </div>
+          </nav>
+
+          <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 user-container">
+            <h1>Users List</h1>
+
+          </main>
+
+          </div>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kit.fontawesome.com/b3414d13e5.js" crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(async function(){
+          const itemCountElement = document.querySelector('.item-count');
+          itemCountElement.textContent = localStorage.getItem("numItemsOnCart");
+
+          
+
+            await $.get("http://localhost:8081/users", function(users){
+                users.forEach(user => {
+                  //replacing spaces to %20 for the url
+                  const cityVal = user.city.replace(/ /g, '%20');
+                  const currentContent = $("#cityContainer").html();
+                  $("#cityContainer").html(currentContent + 
+                    `
+                    <label><input type="checkbox" class="form-check-input" value="${cityVal}"> ${user.city}</label><br>
+                    `
+                  )
+                });
+                displayUsers(users)
+            })
+
+            var checkboxes = $(".form-check-input");
+            var filterBtn = $("#filterBtn");
+
+            checkboxes.on("click", function() {
+            var allUnchecked = true;
+            checkboxes.each(function() {
+                if ($(this).prop("checked")) {
+                    allUnchecked = false;
+                    return false; // Exit the loop early
+                }
+            });
+            filterBtn.prop("disabled", allUnchecked);
+            });
+
+            $(".delete-btn").on('click', async function(){
+              const id = $(this).attr("data-user-id");
+              await $.ajax({
+                  url: "http://localhost:8081/users/user/"+id,
+                  type: "DELETE",
+                  success: function(response){
+                      alert("User deleted successfully")
+                      location.reload();
+                  }
+              })
+            })
+        })
+
+        function displayUsers(users){
+            for (let i = 0; i < users.length; i += 4) {
+                    const row = $("<div>").addClass("row");
+                    $(".user-container").append(row);
+                    for (let j = i; j < i + 4 && j < users.length; j++) {
+                        var userContainer = $("<div>").addClass("col-md-2 user d-flex flex-column align-items-center justify-content-center");
+                        var userIconRow = $("<div>").addClass("row user-icon");
+                        var userIconImg = $("<img>").attr("src", "../imgs/user-icon.png").attr("alt", "");
+                        userIconRow.append(userIconImg);
+                        const content = $("<div>").addClass("row");
+                        content.html(`
+                            ${users[j].username}, ${users[j].age} <br>
+                            ${users[j].city} <br>
+                            ${users[j].gender} <br>
+                        `);
+
+                        const deleteBtn = $("<div>").addClass("row");
+                        deleteBtn.html(`
+                          <button class="delete-btn" data-user-id="${users[j]._id}"> Delete User </button>
+                        `)
+
+                        
+                        userContainer.append(userIconRow, content, deleteBtn);
+                        row.append(userContainer);
+                    }
+                }
+        }
+    
+        async function filterUsers(){
+          var url = "http://localhost:8081/users/filterUsers?age="
+          
+          if($("#ageBelow18").prop("checked")){
+            url+="below18,";
+          } 
+          if($("#age18to30").prop("checked")){
+            url+="18to30,"
+          } 
+          if($("#priceMore50").prop("checked")){
+            url+="above30,"
+          }
+          url+="&gender="
+
+          if($("#male").prop("checked")){
+            url+="Male,";
+          } 
+          if($("#female").prop("checked")){
+            url+="Female,"
+          } 
+          if($("#other").prop("checked")){
+            url+="Other,"
+          }
+
+          url+="&city="
+
+          $("#cityContainer input[type='checkbox']:checked").each(function() {
+                const value = $(this).val();
+                url+=value+","
+            });
+
+          const users = await $.get(url);
+          $(".user-container").empty();
+          const header = $("<h1>").text("Users List");
+          $(".user-container").append(header);
+          displayUsers(users);
+          
+
+        }
+    </script>
+</body>
+</html>

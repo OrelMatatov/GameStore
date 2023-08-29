@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
+    <script src="https://use.fontawesome.com/4210d79b30.js"></script>  
+   <section class="h-100 h-custom" style="background-color: #d2c9ff;">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12">
+        <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+          <div class="card-body p-0">
+            <div class="row g-0">
+              <div class="col-lg-8">
+                <div class="p-5">
+                  <div class="d-flex justify-content-between align-items-center mb-5">
+                    <h1 class="fw-bold mb-0 text-black">Shopping Cart</h1>
+                    <h6 class="mb-0 text-muted keep-track-items"></h6>
+                  </div>
+                  <!-- Add dynamic code from here -->
+                  <div class="cart-container"></div>
+                  <div class="pt-5">
+                    <h6 class="mb-0"><a href="./homePage.html" class="text-body">
+                        <i class="fas fa-long-arrow-alt-left me-2"></i>Back to shopping</a></h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4 bg-grey">
+                <div class="p-5">
+                  <h3 class="fw-bold mb-5 mt-2 pt-1">Summary</h3>
+
+                  <div class="d-flex justify-content-between mb-4">
+                    <h5 class="text-uppercase keep-track-items"></h5>
+
+                    <div class="currency-converter">
+                      <!-- Add a currency selection dropdown -->
+                      <select id="currencySelector">
+                      <option value="USD">USD</option>
+                      <option value="EUR">EUR</option>
+                      <option value="GBP">GBP</option>
+                      <option value="ILS">ILS</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="d-flex justify-content-between mb-5">
+                    <h5 class="text-uppercase">Total price</h5>
+                    <h5 class="keep-track-price"></h5>
+                  </div>
+
+                  <button type="button" class="btn btn-dark btn-block btn-lg"
+                    data-mdb-ripple-color="dark" onclick="buyGames()">BUY</button>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>   
+</body>
+<style>
+    @media (min-width: 1025px) {
+.h-custom {
+height: 100vh !important;
+}
+}
+
+.form-control {
+    width: -webkit-fill-available;
+}
+.form .card-registration .select-input.form-control[readonly]:not([disabled]) {
+font-size: 1rem;
+line-height: 2.15;
+padding-left: .75em;
+padding-right: .75em;
+}
+
+
+.card-registration .select-arrow {
+top: 13px;
+}
+
+.bg-grey {
+background-color: #eae8e8;
+}
+
+@media (min-width: 992px) {
+.card-registration-2 .bg-grey {
+border-top-right-radius: 16px;
+border-bottom-right-radius: 16px;
+}
+}
+
+@media (max-width: 991px) {
+.card-registration-2 .bg-grey {
+border-bottom-left-radius: 16px;
+border-bottom-right-radius: 16px;
+}
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+</style>
+
+<script>
+    // Need to change to be dynamic
+
+    var sum = 0;
+        var totalPrice = 0;
+        var pricesList = [];
+      function showAmounts(){
+                totalCartItems();
+                totalPriceCalc();
+                $(".keep-track-items").html(`${sum} items`);
+                if($('.item-price').text().match(/[$€£₪]/))
+                {
+                $('.keep-track-price').html(`${totalPrice}${$('.item-price').text().match(/[$€£₪]/)}`);
+                }
+                else
+                {
+                  $('.keep-track-price').html(`${totalPrice}`);
+
+                }
+        }
+        
+       
+
+        $(document).on('click', '.delete-btn', function() {
+          
+            var gameID = $(this).attr("data-mygame-id");
+            let amountPerGame = JSON.parse(localStorage.getItem("amountPerGame"));
+            if(gameID){
+              localStorage.setItem("numItemsOnCart", Number(localStorage.getItem("numItemsOnCart"))-amountPerGame[gameID]);
+              delete amountPerGame[gameID];
+              deleteItemFromCart(gameID);
+            }
+            localStorage.setItem("amountPerGame", JSON.stringify(amountPerGame));
+            showAmounts();
+            $(this).parent().parent().parent().remove();
+
+        });
+
+
+        $(document).on('click', '.minus-btn', function() {
+          var gameID = $(this).attr("data-game-id");
+          let amountPerGame = JSON.parse(localStorage.getItem("amountPerGame"));
+          localStorage.setItem("numItemsOnCart", Number(localStorage.getItem("numItemsOnCart"))-1)
+          amountPerGame[gameID] -= 1;
+          sum--;
+          $(':input[type=number]').each(function()
+          {
+            if($(this).val() == 0)
+              {
+                $(this).parent().parent().remove();
+                if(gameID){
+                    deleteItemFromCart(gameID);
+                    delete amountPerGame[gameID];
+                }
+             }
+            })
+            localStorage.setItem("amountPerGame", JSON.stringify(amountPerGame));
+            showAmounts();
+          });
+
+        function totalCartItems(){
+          sum = 0;
+          $(':input[type=number]').each(function()
+          {
+            sum += Number($(this).val());
+          })
+        }
+
+        function totalPriceCalc(){
+          var pricesList = [];
+          var i = 0;
+          totalPrice = 0;
+          $('.item-price').each(function()
+          {
+            pricesList.push(Number($(this).text().match(/\d+/g)));
+          });
+          $(':input[type=number]').each(function()
+          {
+            totalPrice += Number($(this).val()) * pricesList[i];
+            i++;
+          });
+          pricesList = [];
+        }
+
+
+        function plusChangeVal(gameID){
+            localStorage.setItem("numItemsOnCart", Number(localStorage.getItem("numItemsOnCart"))+1)
+            let amountPerGame = JSON.parse(localStorage.getItem("amountPerGame"));
+            amountPerGame[gameID]+=1;
+            localStorage.setItem("amountPerGame", JSON.stringify(amountPerGame));
+            sum++;
+            showAmounts();
+        }
+
+
+        function displayItems(imageSrc, itemName, itemPrice, itemAbout, itemId) {
+            const row = document.createElement('div');
+            row.classList.add('row', 'mb-4', 'd-flex', 'justify-content-between', 'align-items-center');
+
+            const col1 = document.createElement('div');
+            col1.classList.add('col-md-2', 'col-lg-2', 'col-xl-2');
+            col1.innerHTML = `<img src="../imgs/${imageSrc}.png" class="img-fluid rounded-3" alt="${itemName}">`;
+            row.appendChild(col1);
+
+            const col2 = document.createElement('div');
+            col2.classList.add('col-md-3', 'col-lg-3', 'col-xl-3');
+            col2.innerHTML = `
+                <h6 class="text-muted">${itemName}</h6>
+                <h6 class="text-black mb-0">${itemAbout}</h6>
+            `;
+            row.appendChild(col2);
+
+            const col3 = document.createElement('div');
+            col3.classList.add('col-md-3', 'col-lg-3', 'col-xl-2', 'd-flex', 'item');
+            col3.innerHTML = `
+                <button class="btn btn-link px-2 minus-btn" onclick="this.parentNode.querySelector('input[type=number]').stepDown()" data-game-id="${itemId}">
+                <i class="fa fa-minus"></i>
+                </button>
+                <input min="0" name="quantity" value="1" type="number" class="form form-control form-control-sm quantity-input" data-g-id="${itemId}"/>
+                <button class="btn btn-link px-2 plus-btn" onclick="this.parentNode.querySelector('input[type=number]').stepUp(), plusChangeVal(this.getAttribute('data-id'))" data-id="${itemId}">
+                <i class="fa fa-plus"></i>
+                </button>
+            `;
+            row.appendChild(col3);
+
+            const col4 = document.createElement('div');
+            col4.classList.add('col-md-3', 'col-lg-2', 'col-xl-2', 'offset-lg-1');
+            col4.innerHTML = `<h6 class="item-price">${itemPrice}$</h6>`;
+            row.appendChild(col4);
+
+            const col5 = document.createElement('div');
+            col5.classList.add('col-md-1', 'col-lg-1', 'col-xl-1', 'text-end');
+            col5.innerHTML = `<a class="text-muted delete-btn" data-mygame-id="${itemId}"><i class="fa fa-times delete-btn"></i></a>`;
+            row.appendChild(col5);
+            sum += 1;
+            totalPrice += itemPrice;
+            pricesList.push(itemPrice);
+          
+            return row;
+        }
+
+        function convertCurrency(){
+          var pricesList = [];
+          $('#currencySelector').on('change', async function()
+          {
+            const selectedCurrency = $(this).val();
+            const apiKey = '677f1e0ae60a3c30e4c9446a';
+            const apiUrl = 'https://v6.exchangerate-api.com/v6/677f1e0ae60a3c30e4c9446a/latest/USD';
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            const rates = data.conversion_rates;
+
+            var currencySymbol;
+            switch(selectedCurrency)
+            {
+              case 'USD': currencySymbol = '$'
+              break;
+              case 'EUR': currencySymbol = '€'
+              break;
+              case 'GBP': currencySymbol = '£'
+              break;
+              case 'ILS': currencySymbol = '₪'
+              break;
+            }
+
+            //console.log("Selected Currency is: ", selectedCurrency);
+            if(pricesList.length < 1)
+            {
+            $('.item-price').each(function()
+            {
+              pricesList.push(Number($(this).text().match(/\d+/g)));
+            });
+          }
+            console.log(pricesList);
+            if(pricesList.length > 0)
+            {
+              var i = 0;
+              $('.item-price').each(function()
+              {
+                if(i < pricesList.length)
+                {
+                $(this).html((pricesList[i] * rates[selectedCurrency]).toFixed() + currencySymbol);
+                  i++;
+                }
+              });
+            }
+            showAmounts();
+          });
+        }
+
+          function deleteItemFromCart(gameID){
+            if(gameID){
+              var savedGameIDsArray = JSON.parse(localStorage.getItem("savedGameIDs")) || [];
+              var idxToRemove = savedGameIDsArray.indexOf(gameID);
+              if(idxToRemove !== -1){
+                savedGameIDsArray.splice(idxToRemove, 1);
+              }
+              localStorage.setItem("savedGameIDs", JSON.stringify(savedGameIDsArray));
+            }
+          }
+
+        $(document).ready(function() {
+            if(localStorage.getItem("savedGameIDs") != null){
+              const savedGameIDs = localStorage.getItem("savedGameIDs");
+              var gamesIDs=[];
+              if(savedGameIDs)
+              {
+                  gamesIDs = JSON.parse(savedGameIDs);
+              }
+              
+              gamesIDs.forEach(async (gameID) => {
+                  const game = await $.get("http://localhost:8081/games/game/"+gameID);
+                  var imgSrc = game.title.replace(/\s+/g, '').toLowerCase();
+                  const newItem = displayItems(imgSrc, game.title, game.price, game.about, game._id);
+                  $(".cart-container").append(newItem);
+
+                  let amountPerGame = JSON.parse(localStorage.getItem("amountPerGame"));
+                  let inputElement = document.querySelector(`.quantity-input[data-g-id="${gameID}"]`);
+                  inputElement.value = amountPerGame[gameID] 
+                  showAmounts();
+              });
+            }
+            convertCurrency()
+        });
+
+
+        function buyGames(){
+          if(localStorage.getItem("numItemsOnCart") == 0){
+            alert("Cart is empty");
+            return;
+          }
+            var purchase = {}
+            var gamesIDsAndQuantitiues = []
+            var quantities = JSON.parse(localStorage.getItem("amountPerGame"));
+            for(var gameId in quantities){
+              gamesIDsAndQuantitiues.push({"gameId": gameId, "quantity": quantities[gameId]})
+            }
+            purchase.gamesId = gamesIDsAndQuantitiues;
+            purchase.userId = localStorage.getItem("userId");
+            purchase.totalPrice = totalPrice;
+
+            const randomMonth = Math.floor(Math.random() * 12) + 1; 
+            const daysInMonth = new Date(2022, randomMonth, 0).getDate();
+            const randomDay = Math.floor(Math.random() * daysInMonth) + 1;
+
+            const formattedDate = `2022-${randomMonth.toString().padStart(2, '0')}-${randomDay.toString().padStart(2, '0')}`;
+            purchase.date = formattedDate;
+            
+            $.post("http://localhost:8081/purchases", purchase, function(response){
+                alert("The purchase was made successfully");
+                var userID = localStorage.getItem("userId");
+                var username = localStorage.getItem("username");
+                localStorage.clear();
+                localStorage.setItem("userId", userID)
+                localStorage.setItem("username", username)
+                window.location.href = '../views/homePage.html'
+            })
+            .fail(function(err){
+                console.log("Error: ", err);
+            })
+
+        }
+</script>    
+</html>

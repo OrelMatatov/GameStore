@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        #header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+        .map-ul{
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .map-li{
+            margin: 10px;
+        }
+        .location-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+        .location-button:hover {
+            background-color: #0056b3;
+        }
+        #mapContainer {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .cart-icon {
+            position: relative;
+            display: inline-block;
+            
+        }
+
+        .cart-icon-img {
+            display: block;
+            max-width: 100%;
+            width: 20px; 
+            height: 20px;
+            position: absolute;
+            top:20px;
+            right: 30px;
+
+        }
+
+        .item-count {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            transform: translate(50%, -50%); 
+            font-size: 12px; 
+            min-width: 20px;
+            height: 20px;
+            border-radius: 50%; 
+            padding: 3px 6px;
+
+   
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        .navbar{
+            height: 70px;
+        }
+
+        
+      .icon-con{
+        position: absolute;
+        top:20px;
+        right: 25px;
+      }
+
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="./homePage.html">Game Store</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="./homePage.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./userProfile.html">Profile</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./singleUserPurchaseDisplay.html">Purchases</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./suppliersDisplay.html">Suppliers</a>
+            </li>
+            <li class="nav-item dropdown" id="adminDropdown" style="display: none;">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Admin
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="./gameCreationForm.html">Add Game</a></li>
+                <li><a class="dropdown-item" href="./createSupplierForm.html">Add Supplier</a></li>
+                <li><a class="dropdown-item" href="./usersDisplay.html">Users List</a></li>
+                <li><a class="dropdown-item" href="./usersPurchasesDisplay.html">Purchases List</a></li>
+                <li><a class="dropdown-item" href="./statisticGraphs.html">Statistical Graphs</a></li>
+              </ul>
+            </li>
+            
+          </ul>
+  
+          <div clsss="cart-icon">
+            <a href="./cart.html">
+          <!--<img src="../imgs/cart.png" alt="" class="cart-icon-img">-->
+          <div class="icon-con">
+            <i class="fa-solid fa-cart-shopping fa-2x" style="color: #3d84f0;"></i>
+          </div>            
+          <span class="item-count badge badge-danger">0</span>
+          </a>
+          </li>         
+        </div>
+    </nav>
+
+
+    <div id="header">
+        <h1>Our Locations</h1>
+    </div>
+    <ul class="map-ul">
+        <li class="map-li"><button class="location-button" data-map-id="map1">Place 1</button></li>
+        <li class="map-li"><button class="location-button" data-map-id="map2">Place 2</button></li>
+        <li class="map-li"><button class="location-button" data-map-id="map3">Place 3</button></li>
+    </ul>
+
+    <div id="mapContainer">
+      
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://kit.fontawesome.com/b3414d13e5.js" crossorigin="anonymous"></script>
+
+    <script>
+         if(localStorage.getItem("username") === "admin"){
+              $("#adminDropdown").css("display", "block");
+           }
+           const itemCountElement = document.querySelector('.item-count');
+            itemCountElement.textContent = localStorage.getItem("numItemsOnCart");
+        const mapEmbeds = {
+            map1: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3169.0788854143693!2d-122.0713127!3d37.4116103!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808fb75a8b3356cf%3A0xa1cbb5a4fae0943d!2sMicrosoft%20Silicon%20Valley%20Campus!5e0!3m2!1siw!2sil!4v1692954847297!5m2!1siw!2sil" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>',
+            map2: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2427.91851383133!2d13.393131623442594!3d52.516813736465664!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a851db450c485b%3A0x515d86e5ad24fd36!2sMicrosoft%20Berlin%20Office!5e0!3m2!1siw!2sil!4v1692955245178!5m2!1siw!2sil" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>',
+            map3: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3162.166475159995!2d126.98154212418456!3d37.57469742366023!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357ca413fe38a245%3A0x7298d506cd4d6f1d!2sMicrosoft%20Korea!5e0!3m2!1siw!2sil!4v1692955294673!5m2!1siw!2sil" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>',
+          
+        };
+
+        const mapContainer = document.getElementById('mapContainer');
+        const buttons = document.querySelectorAll('.location-button');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const mapId = button.getAttribute('data-map-id');
+                mapContainer.innerHTML = mapEmbeds[mapId];
+            });
+        });
+    </script>
+</body>
+</html>
