@@ -29,6 +29,11 @@ const Game = new Schema({
     releaseYear: {
         type: Number,
         default: 2023
+    },
+
+    supplier: {
+        type: Schema.Types.ObjectId,
+        required: true
     }
 });
 
