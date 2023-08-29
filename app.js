@@ -8,8 +8,9 @@ const users = require('./routes/user')
 const suppliers = require('./routes/supplier')
 
 require('./config/db')
+require('./webSocketServer')
 
-const app = express();
+const app = express();  
 app.use(cors());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.json());
