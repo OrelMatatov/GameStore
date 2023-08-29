@@ -71,7 +71,7 @@ const filterGames = async (price, platform, rating) => {
           priceConditions.push({ price: { $gte: 20, $lte: 50},
           });
         } 
-        else if(value.includes("greaterThan")) {
+        else if(value.includes("moreThen")) {
             priceConditions.push({ price: { $gt: 50 } });
         }
       });
