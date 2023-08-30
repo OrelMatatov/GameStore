@@ -519,7 +519,7 @@
                         const fifthRow = $("<div>").addClass("row")
                           .append($("<div>").addClass("col-md-5").append($("<button>").addClass("add-to-cart-btn").text("Add to cart").attr('data-game-id', currentGame._id)
                             .on('click', function(){
-                              $(this).prop('disabled', true);
+                              //$(this).prop('disabled', true);
                               var gameID = $(this).attr("data-game-id")
                               increase(gameID);
                             })))
@@ -672,18 +672,27 @@
         function updateItemCount(count) {
           itemCountElement.textContent = count;
         }
-        function increase(gameID){
-          const increaseButton = document.querySelector('.add-to-cart-btn');
-
-          let total = Number(localStorage.getItem("numItemsOnCart")) + 1;  
-          updateItemCount(total);
-          let gamesIdArray =  JSON.parse(localStorage.getItem("savedGameIDs"));
-          let amountPerGame = JSON.parse(localStorage.getItem("amountPerGame"));
-          amountPerGame[gameID] = 1;
-          gamesIdArray.push(gameID);
-          localStorage.setItem("savedGameIDs", JSON.stringify(gamesIdArray));
-          localStorage.setItem("numItemsOnCart", total);
-          localStorage.setItem("amountPerGame", JSON.stringify(amountPerGame));
+        async function increase(gameID){
+          try{
+            await $.get("http://localhost:8081/games/game/"+gameID);
+            const button = $(`.add-to-cart-btn[data-game-id="${gameID}"]`);
+            // Enable the button
+            button.prop('disabled', true);
+            const increaseButton = document.querySelector('.add-to-cart-btn');
+            let total = Number(localStorage.getItem("numItemsOnCart")) + 1;  
+            updateItemCount(total);
+            let gamesIdArray =  JSON.parse(localStorage.getItem("savedGameIDs"));
+            let amountPerGame = JSON.parse(localStorage.getItem("amountPerGame"));
+            amountPerGame[gameID] = 1;
+            gamesIdArray.push(gameID);
+            localStorage.setItem("savedGameIDs", JSON.stringify(gamesIdArray));
+            localStorage.setItem("numItemsOnCart", total);
+            localStorage.setItem("amountPerGame", JSON.stringify(amountPerGame));
+          }catch(err){
+            alert("Game has been deleted");
+            window.location = window.location.href;
+          }
+          
         }
 
         async function filterGames(){
@@ -764,9 +773,16 @@
           }
         } 
     
-        function editGame(gameId){
-            localStorage.setItem("editedGameId", gameId);
-            window.location.href = './updateGameForm.html'
+        async function editGame(gameId){
+          try{
+              await $.get("http://localhost:8081/games/game/"+gameId);
+              localStorage.setItem("editedGameId", gameId);
+              window.location.href = './updateGameForm.html'
+          } catch(err){
+            alert("Cant edit - game has been deleted")
+            window.location = window.location.href;
+          }
+            
         }
 
         function groupByYear(){
