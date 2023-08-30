@@ -177,10 +177,20 @@
                         const purchaseItem = document.createElement("div");
                         purchaseItem.className = "col-md-3 single-purchase-container";
                         row.append(purchaseItem)
-                        for(let k=0; k<purchases[i].gamesId.length; k++){
+                        for(let k=0; k<purchases[j].gamesId.length; k++){
                             const quantity = purchases[j].gamesId[k].quantity;
-                            const game = await $.get("http://localhost:8081/games/game/"+purchases[j].gamesId[k].gameId)
-                            if(game == null){
+                            var game = null;
+
+                            try{
+                                game = await $.get("http://localhost:8081/games/game/"+purchases[j].gamesId[k].gameId)
+                            } catch(err){
+                                try{
+                                    game = await $.get("http://localhost:8081/games/game/fromDeletedGames/"+purchases[j].gamesId[k].gameId)
+                                    game = game[0];
+                                }catch(err){}
+                            }
+                            
+                            if(!game){
                                 return;
                             }
 
@@ -194,7 +204,7 @@
                                 <div class="col-md-3 purchase-details">
                                     ${game.title} <br>
                                     x${quantity} <br>
-                                    ${game.price}€
+                                    ${game.price}$
                                 </div>
                             `
                             purchaseItem.append(singleGame)
