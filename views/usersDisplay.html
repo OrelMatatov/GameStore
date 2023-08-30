@@ -214,8 +214,6 @@
           const itemCountElement = document.querySelector('.item-count');
           itemCountElement.textContent = localStorage.getItem("numItemsOnCart");
 
-          
-
             await $.get("http://localhost:8081/users", function(users){
                 users.forEach(user => {
                   //replacing spaces to %20 for the url
@@ -246,14 +244,21 @@
 
             $(".delete-btn").on('click', async function(){
               const id = $(this).attr("data-user-id");
-              await $.ajax({
-                  url: "http://localhost:8081/users/user/"+id,
-                  type: "DELETE",
-                  success: function(response){
-                      alert("User deleted successfully")
-                      location.reload();
-                  }
-              })
+
+              try{
+                  await $.ajax({
+                    url: "http://localhost:8081/users/user/"+id,
+                    type: "DELETE",
+                    success: function(response){
+                        alert("User deleted successfully")
+                        window.location = window.location.href;
+                    }
+                })
+              }catch(err){
+                alert("User already been deleted");
+                window.location = window.location.href;
+              }
+              
             })
         })
 
