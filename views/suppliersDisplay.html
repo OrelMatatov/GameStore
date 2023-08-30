@@ -210,22 +210,33 @@
                   const games = await $.get("http://localhost:8081/games");
                   games.forEach(async game => {
                       if(game.supplier === id){
-                        await $.ajax({
-                          url: "http://localhost:8081/games/game/"+game._id,
-                          type: "DELETE",
-                          success: function(response){}
-                        })
+                        try{
+                            await $.ajax({
+                            url: "http://localhost:8081/games/game/"+game._id,
+                            type: "DELETE",
+                            success: function(response){}
+                          })
+                        }catch(Err){
+                          console.log(Err);
+                        }
                       }
                   });
-                  await $.ajax({
-                      url: "http://localhost:8081/suppliers/supplier/"+id,
-                      type: "DELETE",
-                      success: function(response){
-                          alert("Supplier deleted successfully")
-                          $(".supplier-container").empty();
-                          displaySuppliers();
-                      }
-                  })
+                  
+                  try{
+                      await $.ajax({
+                        url: "http://localhost:8081/suppliers/supplier/"+id,
+                        type: "DELETE",
+                        success: function(response){
+                            alert("Supplier deleted successfully")
+                            $(".supplier-container").empty();
+                            displaySuppliers();
+                        }
+                    })
+                  }catch(err){
+                    alert("Supplier alreay been deleted")
+                    window.location = window.location.href;
+                  }
+                  
                 })
 
                
@@ -233,28 +244,34 @@
     
         async function displayEditSupplierPage(id){
             $(".supplier-container").empty();
-            const supplier = await $.get("http://localhost:8081/suppliers/supplier/"+id);
-            $(".supplier-container").html(`
-                <div class="row supplier-icon">
-                    <img src="../imgs/supplier-icon.png" alt="User">
-                    </div> <br>
-                    <div class="row">
-                        <span>Name: </span> <input type="text" value="${supplier.name}" id="name">
-                    </div> <br>
-                    <div class="row">
-                        <span>Address: </span> <input type="text" value="${supplier.address}" id="address">
-                    </div> <br>
-                    <div class="row">
-                        <span>Customer Service #: </span> <input type="text" value="${supplier.csNumber}" id="csNumber">
-                    </div> <br>
-                    <div class="row">
-                        <input type="button" value="Edit" class="launch-edit-btn" data-supp-id="${supplier._id}">
-                </div> `)
+            try{
+              const supplier = await $.get("http://localhost:8081/suppliers/supplier/"+id);
+              $(".supplier-container").html(`
+                  <div class="row supplier-icon">
+                      <img src="../imgs/supplier-icon.png" alt="User">
+                      </div> <br>
+                      <div class="row">
+                          <span>Name: </span> <input type="text" value="${supplier.name}" id="name">
+                      </div> <br>
+                      <div class="row">
+                          <span>Address: </span> <input type="text" value="${supplier.address}" id="address">
+                      </div> <br>
+                      <div class="row">
+                          <span>Customer Service #: </span> <input type="text" value="${supplier.csNumber}" id="csNumber">
+                      </div> <br>
+                      <div class="row">
+                          <input type="button" value="Edit" class="launch-edit-btn" data-supp-id="${supplier._id}">
+                  </div> `)
 
-                $(".launch-edit-btn").on('click', function(){
-                    const id = $(this).attr("data-supp-id");
-                    launchEditSupplier(id)
-                })
+                  $(".launch-edit-btn").on('click', function(){
+                      const id = $(this).attr("data-supp-id");
+                      launchEditSupplier(id)
+                  })
+            } catch(err){
+              alert("Cant edit - supplier must have been deleted")
+              window.location = window.location.href;
+            }
+            
 
         }
         
@@ -284,22 +301,24 @@
                     csNumber: csNumber
                 }
 
-                $.ajax({
-                    url:"http://localhost:8081/suppliers/supplier/"+id,
-                    type: 'PUT',
-                    contentType: 'application/json',
-                    data: JSON.stringify(data),
-                }).done(function(){
-                    alert("Supplier successfully updated");
-                    $(".supplier-container").empty();
-                    displaySuppliers();
+                try{
+                    $.ajax({
+                      url:"http://localhost:8081/suppliers/supplier/"+id,
+                      type: 'PUT',
+                      contentType: 'application/json',
+                      data: JSON.stringify(data),
+                  }).done(function(){
+                      alert("Supplier successfully updated");
+                      $(".supplier-container").empty();
+                      displaySuppliers();
 
-                }).fail(function(err){
-                    console.log("Error: ", err);
-                })
-            
-            
-           
+                  }).fail(function(err){
+                      console.log("Error: ", err);
+                  })
+                }catch(err){
+                  alert("Cant edit - supplier been deleted")
+                  window.location = window.location.href;
+                } 
         }
     </script> 
 </body>
