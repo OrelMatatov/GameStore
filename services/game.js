@@ -1,4 +1,5 @@
 const Game = require('../models/game')
+const DeletedGame = require("../models/deletedGames")
 
 const createGame = async(title, platform, price, about, rating, releaseYear, supplier) =>{
     var game = new Game(
@@ -26,6 +27,10 @@ const getGameById = async(id) => {
     return await Game.findById(id)
 }
 
+const getDeletedGameById = async(id) => {
+    return await DeletedGame.find({gameId:id});
+}
+
 const getGames = async() =>{
     return await Game.find({})
 }
@@ -43,6 +48,18 @@ const updateGame = async (id, title, platform, price, about, rating, releaseYear
 
 const deleteGame = async (id) => {
     const game = await getGameById(id);
+    var deletedGame = new DeletedGame(
+      {
+          gameId: game._id,
+          title:game.title,
+          platform:game.platform,
+          price:game.price,
+          about:game.about,
+          rating:game.rating,
+          releaseYear: game.releaseYear,
+          supplier: game.supplier
+      });
+    await deletedGame.save();  
     if (!game)
         return null;
     await game.deleteOne();
@@ -125,6 +142,7 @@ module.exports = {
     getGames,
     updateGame,
     deleteGame,
+    getDeletedGameById,
     searchGamesByTitle,
     filterGames,
     groupByReleaseYear,
