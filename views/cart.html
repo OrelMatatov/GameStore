@@ -56,7 +56,7 @@
                   </div>
 
                   <button type="button" class="btn btn-dark btn-block btn-lg"
-                    data-mdb-ripple-color="dark" onclick="buyGames()">BUY</button>
+                    data-mdb-ripple-color="dark" onclick="buy()">BUY</button>
                 </div>
                 
               </div>
@@ -339,12 +339,30 @@ input::-webkit-inner-spin-button {
             convertCurrency()
         });
 
-
-        function buyGames(){
+        async function buy(){
           if(localStorage.getItem("numItemsOnCart") == 0){
-            alert("Cart is empty");
+            alert("Cart is empty. If you added items they must have been deleted by the admin");
             return;
           }
+          try{
+            var game;
+            var total = 0;
+            const savedGameIDs = JSON.parse(localStorage.getItem("savedGameIDs"));
+            const amountPerGame = JSON.parse(localStorage.getItem("amountPerGame"));
+            for(const id of savedGameIDs){
+              try{
+                game = await $.get("http://localhost:8081/games/game/"+id);
+                total += game.price * amountPerGame[game._id];
+              }catch(err){
+                deleteItemFromCart(id);
+                delete amountPerGame[id];
+                localStorage.setItem("amountPerGame", JSON.stringify(amountPerGame));
+                localStorage.setItem("numItemsOnCart", localStorage.getItem("numItemsOnCart") - 1);
+                alert("One of the games has been deleted");
+                throw err;
+              }
+            }
+
             var purchase = {}
             var gamesIDsAndQuantitiues = []
             var quantities = JSON.parse(localStorage.getItem("amountPerGame"));
@@ -353,7 +371,7 @@ input::-webkit-inner-spin-button {
             }
             purchase.gamesId = gamesIDsAndQuantitiues;
             purchase.userId = localStorage.getItem("userId");
-            purchase.totalPrice = totalPrice;
+            purchase.totalPrice = total;
 
             const randomMonth = Math.floor(Math.random() * 12) + 1; 
             const daysInMonth = new Date(2022, randomMonth, 0).getDate();
@@ -363,18 +381,97 @@ input::-webkit-inner-spin-button {
             purchase.date = formattedDate;
             
             $.post("http://localhost:8081/purchases", purchase, function(response){
-                alert("The purchase was made successfully");
-                var userID = localStorage.getItem("userId");
-                var username = localStorage.getItem("username");
-                localStorage.clear();
-                localStorage.setItem("userId", userID)
-                localStorage.setItem("username", username)
-                window.location.href = '../views/homePage.html'
-            })
-            .fail(function(err){
-                console.log("Error: ", err);
-            })
+                      alert("The purchase was made successfully");
+                      var userID = localStorage.getItem("userId");
+                      var username = localStorage.getItem("username");
+                      localStorage.clear();
+                      localStorage.setItem("userId", userID)
+                      localStorage.setItem("username", username)
+                      window.location.href = '../views/homePage.html'
+                      console.log(purchase);
+                  })
+                  .fail(function(err){
+                      console.log("Error: ", err);
+                  })
 
+          }catch(err){
+            backToHomePage();
+          }
         }
+
+        /*function buyGames(){
+          if(localStorage.getItem("numItemsOnCart") == 0){
+            alert("Cart is empty. If you added items they must have been deleted by the admin");
+            return;
+          }
+          try{
+              var flag = true;
+              var deleteId = null;
+              JSON.parse(localStorage.getItem("savedGameIDs")).forEach(async (id)=> {
+                try{
+                  console.log(id);
+                  deleteId = id;
+                  await $.get("http://localhost:8081/games/game/"+id);
+                }catch(err){
+                    console.log(deleteId);
+                    deleteItemFromCart(deleteId);
+                    let amountPerGame = JSON.parse(localStorage.getItem("amountPerGame"));
+                    delete amountPerGame[deleteId];
+                    localStorage.setItem("amountPerGame", JSON.stringify(amountPerGame))
+                    localStorage.setItem("numItemsOnCart", localStorage.getItem("numItemsOnCart")-1);
+                    alert("One Of the games has been deleted");
+                    throw err;
+                  }
+              })
+
+              console.log(flag);
+  
+                var purchase = {}
+                var gamesIDsAndQuantitiues = []
+                var quantities = JSON.parse(localStorage.getItem("amountPerGame"));
+                for(var gameId in quantities){
+                  gamesIDsAndQuantitiues.push({"gameId": gameId, "quantity": quantities[gameId]})
+                }
+                purchase.gamesId = gamesIDsAndQuantitiues;
+                purchase.userId = localStorage.getItem("userId");
+                purchase.totalPrice = totalPrice;
+
+                const randomMonth = Math.floor(Math.random() * 12) + 1; 
+                const daysInMonth = new Date(2022, randomMonth, 0).getDate();
+                const randomDay = Math.floor(Math.random() * daysInMonth) + 1;
+
+                const formattedDate = `2022-${randomMonth.toString().padStart(2, '0')}-${randomDay.toString().padStart(2, '0')}`;
+                purchase.date = formattedDate;
+                
+                console.log(flag);
+                flag=false;
+                if(flag){
+                    $.post("http://localhost:8081/purchases", purchase, function(response){
+                      alert("The purchase was made successfully");
+                      var userID = localStorage.getItem("userId");
+                      var username = localStorage.getItem("username");
+                      localStorage.clear();
+                      localStorage.setItem("userId", userID)
+                      localStorage.setItem("username", username)
+                      window.location.href = '../views/homePage.html'
+                  })
+                  .fail(function(err){
+                      console.log("Error: ", err);
+                  })
+                }
+             
+          }catch(err){
+            backToHomePage();
+          }
+            
+            
+            
+          }*/
+
+          function backToHomePage(){
+              window.location.href = '../views/homePage.html'
+          }
+
+        
 </script>    
 </html>
