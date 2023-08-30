@@ -12,6 +12,9 @@ router.route('/game/:id')
     .put(gameController.updateGame)
     .delete(gameController.deleteGame)
 
+router.route('/game/fromDeletedGames/:id')
+    .get(gameController.getDeletedGameById)
+
 router.route('/search')
     .get(gameController.searchGamesByTitle);
 
