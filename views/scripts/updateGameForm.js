@@ -103,7 +103,7 @@ function isValidInput(inputText) {
 }
 
 function priceInputValidation(inputPrice){
-    const regex = /^[0-9,]+$/
+    const regex = /^(?!0\d)([1-9]\d*|0)?$/;
     return regex.test(inputPrice);
 }
 
