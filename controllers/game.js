@@ -65,6 +65,11 @@ const deleteGame = async (req,res) => {
     res.send();
 }
 
+const getDeletedGameById = async (req,res) => {
+    const game = await gameService.getDeletedGameById(req.params.id);
+    res.json(game)
+}
+
 const searchGamesByTitle = async (req, res) => {
     const game = await gameService.searchGamesByTitle(req.query.title);
     res.json(game);
@@ -97,6 +102,7 @@ module.exports = {
     getGames,
     updateGame,
     deleteGame,
+    getDeletedGameById,
     searchGamesByTitle,
     filterGames,
     groupByReleaseYear,
